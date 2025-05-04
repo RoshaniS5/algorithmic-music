@@ -6,19 +6,50 @@
   const synth = new Tone.PolySynth().toDestination()
   let scale
   let scale_arg1
-  const chord = nn.createChord(scale, 'triad')
-  let keydown = false
+  let scale_arg2
+  let scale_arg3
+  let chord
   const chord_letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+  let text
+  
+  function playChord () {
+    scale = nn.createScale(scale_arg1 + scale_arg2, scale_arg3)
+    chord = nn.createChord(scale, 'triad')
+    synth.triggerAttackRelease(chord, 10, now)
+  }
+  
+  function chooseMajorMinor (eve) {
+    let choice = eve.key
+    if (choice === 'ArrowLeft') {
+      scale_arg3 = 'major'
+      playChord()
+    }
+    else if (choice === 'ArrowRight') {
+      scale_arg3 = 'minor'
+      playChord()
+    }
+  }
+  
+  function chooseChordNumber (event) {
+    let number = event.key
+    if (number >= 1 && number <= 9) {
+      scale_arg2 = number
+      text.content('Major or minor? Press the left or right key, respectively.')
+      nn.on('keypress', chooseMajorMinor)
+    }
+  }
   
   function chooseChordLetter (e) {
-    let letter = e.key
+    let letter = e.key.toUpperCase()
     if (chord_letters.includes(letter)) {
       scale_arg1 = letter
+      text.content('Press any number from 1-9 to continue.')
+      nn.on('keypress', chooseChordNumber)
     }
   }
   
   function setup () {
-    nn.create('div')
+    text = nn.create('div')
       .content('Press any letter from A-G to begin...')
       .css({
         position: 'absolute',
@@ -28,9 +59,10 @@
         fontSize: 30
       })
       .addTo('body')
+    
+    nn.on('keypress', chooseChordLetter)
   }
   
   nn.on('load', setup)
-  nn.on('keypress', chooseChordLetter)
   
 </script>
