@@ -12,10 +12,15 @@
   const chord_letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
   let text
   
+  function backToStart () {
+    text.content('Press any letter from A-G to begin...')
+    nn.on('keypress', chooseChordLetter)
+  }
+  
   function playChord () {
     scale = nn.createScale(scale_arg1 + scale_arg2, scale_arg3)
     chord = nn.createChord(scale, 'triad')
-    synth.triggerAttackRelease(chord, 10, now)
+    synth.triggerAttackRelease(chord, 1, Tone.now())
   }
   
   function chooseMajorMinor (eve) {
@@ -23,10 +28,12 @@
     if (choice === 'ArrowLeft') {
       scale_arg3 = 'major'
       playChord()
+      backToStart()
     }
     else if (choice === 'ArrowRight') {
       scale_arg3 = 'minor'
       playChord()
+      backToStart()
     }
   }
   
@@ -35,7 +42,7 @@
     if (number >= 1 && number <= 9) {
       scale_arg2 = number
       text.content('Major or minor? Press the left or right key, respectively.')
-      nn.on('keypress', chooseMajorMinor)
+      nn.on('keydown', chooseMajorMinor)
     }
   }
   
