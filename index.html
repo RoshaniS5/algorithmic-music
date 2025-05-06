@@ -17,6 +17,9 @@
   function backToStart () {
     text.content('Press any letter from A-G to begin...')
     bigtext.content('')
+    window.removeEventListener('keypress', chooseChordLetter)
+    window.removeEventListener('keypress', chooseChordNumber)
+    window.removeEventListener('keydown', chooseMajorMinor)
     nn.on('keypress', chooseChordLetter)
   }
   
@@ -27,7 +30,10 @@
     synth.triggerAttackRelease(chord, 1, Tone.now())
     
     restart = nn.create('input')
-      .set('value', 'Back to the beginning!')
+      .set({
+        value: 'Back to the beginning!',
+        type: 'button'
+      })
       .css({
         display: 'inline',
         textAlign: 'center',
